@@ -20,6 +20,10 @@ describe 'YamlLint::Linter' do
     expect(linter.check(spec_data('valid_very_complex.yaml'))).to be(true)
   end
 
+  it 'should be happy with a valid YAML file with anchor' do
+    expect(linter.check(spec_data('valid_anchor.yaml'))).to be(true)
+  end
+
   it 'should have 0 error count with a valid YAML file' do
     linter.check(spec_data('valid.yaml'))
     expect(linter.errors_count).to eq(0)
@@ -69,5 +73,9 @@ describe 'YamlLint::Linter' do
 
   it 'should be unhapy with a YAML file full of spaces' do
     expect(linter.check(spec_data('spaces.yaml'))).to be(false)
+  end
+
+  it 'should be unhappy with a YAML file with duplicate anchor in same level' do
+    expect(linter.check(spec_data('invalid_anchor.yaml'))).to be(false)
   end
 end
