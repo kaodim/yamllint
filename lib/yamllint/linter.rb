@@ -116,7 +116,7 @@ module YamlLint
 
     # Check that the data is valid YAML
     def check_syntax_valid?(yaml_data, errors_array)
-      YAML.safe_load(yaml_data)
+      YAML.safe_load(yaml_data, [], [], aliases: true)
       true
     rescue YAML::SyntaxError => e
       errors_array << e.message
@@ -172,6 +172,13 @@ module YamlLint
             parse_recurse(n)
             hash_end(@last_key.last)
             is_key = false
+            @last_key.pop
+          when 'Psych::Nodes::Alias'
+            is_key = false
+            @last_key.last << n.anchor
+            add_value(n.anchor, @last_key.last)
+            msg = "Anchor: #{n.anchor}, key: #{is_key}, last_key: #{@last_key}"
+            YamlLint.logger.debug { msg }
             @last_key.pop
           end
         end
